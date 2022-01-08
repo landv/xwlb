@@ -9,7 +9,7 @@ function update() {
 
   var news = files.map((f) => `+ [${f.replace(".md", "")}](./news/${f})`);
   var newsHtml = htmlFiles.map(
-    (f) => `+ [${f.replace(".html", "")}](https://raw.githubusercontent.com/xiaoyu2er/xwlb/master/html/${f})`
+    (f) => `+ [${f.replace(".html", "")}](https://raw.githubusercontent.com/landv/xwlb/master/html/${f})`
   );
   var str = `# 新闻联播
 

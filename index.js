@@ -1,8 +1,13 @@
+// node-crawler 是一个轻量级的node.js爬虫工具
 const Crawler = require("crawler");
+// 文件
 const fs = require("fs");
+// cheerio是nodejs的抓取页面模块
 const cheerio = require("cheerio");
+// turndown HTML转换为Markdown
 const TurndownService = require("turndown");
 const turndownService = new TurndownService();
+//  Showdown.js 是一个基于JavaScript 开发环境的MarkDown 语法解释工具
 const showdown = require("showdown");
 const converter = new showdown.Converter();
 const { isDate, parseDate, formatDate, formatDate2, formatDate3 } = require("./util");
@@ -27,8 +32,9 @@ const options = {
   },
   maxConnections: 8,
 };
-
+// 获取URL
 function getUrl(date) {
+  // 有两种url组合，2022年现在都是`https://tv.cctv.com/lm/xwlb/day/${str}.shtml`;
   if (!isDate(date)) {
     date = new Date(date);
   }
@@ -54,14 +60,17 @@ function getUrl(date) {
   return `https://tv.cctv.com/lm/xwlb/day/${str}.shtml`;
 }
 
+// 获取新闻详细信息队列，URL
 function getNewsDetailQueues(date) {
   const urls = [];
   const url = getUrl(date);
   if (!url) {
     return urls;
   }
+  // Promise 是抽象异步处理对象以及对其进行各种操作的组件
   return new Promise((resolve) => {
     const c = new Crawler({
+      // 三个点 https://segmentfault.com/a/1190000021975579
       ...options,
       callback: (error, res, done) => {
         const uri = res.request.uri;
@@ -77,6 +86,7 @@ function getNewsDetailQueues(date) {
 
         $("a").each((i, ele) => {
           if (i > 0) {
+            // 替换
             urls.push($(ele).attr("href").replace("http://news.cntv.cn/", "http://tv.cctv.com/"));
           }
         });
@@ -84,7 +94,7 @@ function getNewsDetailQueues(date) {
         done();
       },
     });
-
+    // 查询
     c.queue(url);
     c.on("drain", () => {
       resolve(urls);
@@ -92,6 +102,8 @@ function getNewsDetailQueues(date) {
   });
 }
 
+
+// 获取新闻详情
 function getNewsDetail(date, queues) {
   const result = [];
   return new Promise((resolve) => {
@@ -108,7 +120,7 @@ function getNewsDetail(date, queues) {
         }
 
         const $ = res.$;
-
+        // 这里需要debug,看看是否是因为Crawler的问题。原始数据是没有h3标签的
         const title = $(".cnt_nav h3").text().trim().replace("[视频]", "");
         //   const content = $(".cnt_bd").text();
         const html = $(".cnt_bd").html();
@@ -158,6 +170,7 @@ async function toFile(date, result, cb) {
   fs.writeFileSync(`./html/${dateStr}.html`, html);
 }
 
+// 开始时间，结束时间；  async异步
 async function main(startDate, endDate) {
   if (!endDate) {
     endDate = startDate;
@@ -189,15 +202,17 @@ async function main(startDate, endDate) {
 
     return p;
   });
-
+  // 等待执行完毕
   await Promise.all(ps);
 
+  // 更新Readme
   updateReadme();
   console.log("done");
 
   //   return;
 }
 
+// 断言args传参
 if (args.length) {
   const date1 = new Date(args[0]);
   const date2 = args[1] ? new Date(args[1]) : date1;
