@@ -1,60 +1,91 @@
+#https://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html
+#https://www.yuchanns.xyz/2021/01/02/use-of-github-actions/
+# name字段是workflow的名称
 name: Update CCTV News
+# on指定除非workflow的条件
 on: 
+# push事件触发 workflow。
   push:
+  # 指定触发事件时，可以限定分支或标签。
     branches: 
-      - master
+      - master 
+# schedule这一事件相对比较特殊，它是一个定时器事件，支持Posix cron语法调度配置：
   schedule:
+    # UTC 12 + 8 北京时间
     # 定时执行，Runs at 20:00 UTC every day
     - cron:  "0 12 * * *"
+# jobs: 作业集
 jobs:
+  # job_id
   UpdateNews:
+    # 最旧的提交 commits 不包含 [auto]
     if: "!contains(github.event.commits[0].message, '[auto]')"
+    # 运行器
     runs-on: ubuntu-latest
+    # 步骤
     steps:
+      # 步骤名称
+      # 设置时区
       - name: Set timezone
+        # 使用工作流插件
+        # https://github.com/marketplace/actions/set-timezone
         uses: szenius/set-timezone@v1.0
+        # 入参
         with:
+          # 设置时区
           timezoneLinux: "Asia/Singapore"
           timezoneMacos: "Asia/Singapore"
           timezoneWindows: "Singapore Standard Time"
+      # 获取当前日期
       - name: Get current date
+        # 缩写名字ID
         id: date
+        # shell命令 输出时间 date +'%Y-%m-%d'
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      # 用环境变量测试
       - name: Test with environment variables
         run: echo current date - $DATE
         env:
           DATE: ${{ steps.date.outputs.date }}
+      # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@v2
         with:
           persist-credentials: false
+      # 设置 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@main
         with:
           node-version: '14'
+      # 安装依赖
       - name: Install dependencies
         run: npm install
+      # 执行获取xwlb 
       - name: Update ${{ steps.date.outputs.date }} 
         run: node index.js ${{ steps.date.outputs.date }}
         # run: npm run today
+      # 检查文件是否存在 https://github.com/andstor/file-existence-action
       - name: Check file existence
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
           files: "news/${{ steps.date.outputs.date }}.md"
+      # 提交文件
       - name: Commit files
+        # 如果文件存在
         if: steps.check_files.outputs.files_exists == 'true'
         run: |
-         git config --local user.email "zongyanqi@foxmail.com"
-         git config --local user.name "xiaoyu2er"
+         git config --local user.email "landvcn@qq.com"
+         git config --local user.name "landv"
          git add .
          git commit -m "[auto] update ${{ steps.date.outputs.date }}"
+       # 推送更改 https://github.com/ad-m/github-push-action
       - name: Push changes
         if: steps.check_files.outputs.files_exists == 'true'
         uses:  ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.MY_GIT_TOKEN }}
           branch: master
-      - name: Update Yuque
-        if: steps.check_files.outputs.files_exists == 'true'
-        run: node yuque.js ${{ secrets.YUQUE_TOKEN }}
+#       - name: Update Yuque
+#         if: steps.check_files.outputs.files_exists == 'true'
+#         run: node yuque.js ${{ secrets.YUQUE_TOKEN }}
