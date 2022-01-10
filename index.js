@@ -120,9 +120,10 @@ function getNewsDetail(date, queues) {
         }
 
         const $ = res.$;
-        // 这里需要debug,看看是否是因为Crawler的问题。原始数据是没有h3标签的
+        // 新闻详情里面cnt_nav h3是标题
         const title = $(".cnt_nav h3").text().trim().replace("[视频]", "");
         //   const content = $(".cnt_bd").text();
+        // 新闻详情里面cnt_bd 是文字内容。在20:00的时候可能不完整。
         const html = $(".cnt_bd").html();
         const markdown = turndownService.turndown(html);
 
