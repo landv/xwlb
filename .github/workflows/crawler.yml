@@ -13,7 +13,8 @@ on:
   schedule:
     # UTC 12 + 8 北京时间
     # 定时执行，Runs at 20:00 UTC every day
-    - cron:  "0 12 * * *"
+    # 晚上八点的时候稿件不全
+    - cron:  "0 13 * * *"
 # jobs: 作业集
 jobs:
   # job_id
