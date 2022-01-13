@@ -257,17 +257,122 @@ function first(){
      * 第一次全面分析
      * 如果分析文件为空，则执行第一次全面分析
      */
+    console.time('全面分析')
     var c={}
     var f=fileDate()
-    f=regexp(f.c)
-    f=nodejieba.cut(f)
-    f=stopWords(f)
-    f=StatisticsWordfrequency(f)
-    c.all=f
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.all=f
+    }
+
+
+    // 日
+    var f=fileDate(dateStr,dateStr)
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.theday=f
+    }else{
+        c.theday={}
+    }
+    // 本周
+    var f=fileDate(getThisWeekData()['start_day'],dateStr)
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.thisweek=f
+    }else{
+        c.thisweek={}
+    }
+    // 上周 
+    var f=fileDate(getLastWeekData()['start_day'],getLastWeekData()['end_day'])
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.lastweek=f
+    }else{
+        c.lastweek={}
+    }
+    // 本月
+    var f=fileDate(getThisMonth()['start_day'],dateStr)
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.thismonth=f
+    }else{
+        c.thismonth={}
+    } 
+    // 上月 
+    var f=fileDate(getLastMonth()['start_day'],getLastMonth()['end_day'])
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.lastmonth=f 
+    }else{
+        c.lastmonth={}
+    } 
+    // 本季度
+    var f=fileDate(getThisQuarterly()['start_day'],dateStr)
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.thisquarterly=f 
+    }else{
+        c.thisquarterly={}
+    }  
+    // 本年 
+    var f=fileDate(getThisyear()['start_day'],dateStr)
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.thisyear=f 
+    }else{
+        c.thisyear={}
+    }
+    // 去年
+    var f=fileDate(getlastyear()['start_day'],getlastyear()['end_day'])
+    if(f.c!=''){
+        f=regexp(f.c)
+        f=nodejieba.cut(f)
+        f=stopWords(f)
+        f=StatisticsWordfrequency(f)
+        f=sortNumber(f)
+        c.lastyear=f  
+    }else{
+        c.lastyear={}
+    }
     fs.writeFileSync('./analysisout/analysis.json', JSON.stringify(c) , 'utf-8');
     // console.log(JSON.parse(fs.readFileSync('./analysisout/analysis.json', 'utf8')))
-    var tt= filterWordfrequency(JSON.parse(fs.readFileSync('./analysisout/analysis.json', 'utf8')).all,500)
-    console.log(sortNumber(tt)) // 排序
+    // var tt= filterWordfrequency(JSON.parse(fs.readFileSync('./analysisout/analysis.json', 'utf8')).all,500) // 从文件读取并过滤
+    // // console.log(sortNumber(tt)) // 排序
+    // fs.writeFileSync('./analysisout/analysis.json', sortNumber(tt) , 'utf-8');// 排序后写如文件
+    console.timeEnd('全面分析')
+    // 全面分析: 7:08.633 (m:ss.mmm)
 }
 
 function dailySum(){
@@ -290,6 +395,8 @@ function dailySum(){
 // console.log(getThisyear()['end_day']) // 本年最后一天
 // console.log(getThisQuarterly()) // 本季度
 // console.log(getlastyear())//去年
+
+// 日 本周 上周 本月 上月 本季度 本年 去年 
 }
 
 
@@ -369,19 +476,23 @@ function sortNumber(list)// 降序排序
 
 async function main(){
 // 判断是否有历史统计数据，没有就全面计算
-if (1) {
-    first()
-}else{
-    dailySum()
+    fs.access('./analysisout/analysis.json', fs.constants.F_OK, (err) => {
+    if (err){
+        console.log("全面计算")
+        first() // 全面计算
+    }  
+    else{
+        console.log("日累计")
+        dailySum()// 日累计
+    }
+    });    
 }
-    
-}
-// main()
+main()
 
 
 
-module.exports = {
-    fileRead,
-    regexp,
-  };
+// module.exports = {
+//     fileRead,
+//     regexp,
+//   };
   
