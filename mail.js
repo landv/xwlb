@@ -40,7 +40,7 @@ async function main() {
       from: `"landvcn" ${args[2]}`, // 发送方邮箱的账号
       to: `${args[2]}`, // 邮箱接受者的账号,这里有腾讯限制不能进行群发。
       subject: dateStr+"新闻联播", // Subject line
-    //   text: "", // 文本内容
+      text: "别看了，今天没有新闻~~~", // 文本内容
         //   `./html/${dateStr}.html` 文件位置
       html: htmldata, // html 内容, 如果设置了html内容, 将忽略text内容
     };
