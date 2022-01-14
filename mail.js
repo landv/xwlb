@@ -5,7 +5,7 @@ const { isDate, parseDate, formatDate, formatDate2, formatDate3 } = require("./u
 // 定义时间
 const dateStr = formatDate(new Date())
 const args = process.argv.slice(2);
-let htmldata=""
+var htmldata=""
 
 // 使用async..await 创建执行函数
 async function main() {
@@ -25,15 +25,14 @@ async function main() {
       },
     });
     try {
-        const htmldata = fs.readFileSync(`./html/${dateStr}.html`, 'utf8')
+        htmldata = fs.readFileSync(`./html/${dateStr}.html`, 'utf8')
         // TODO 解析数据分析数据。
         // const sisiout = fs.readFileSync(`./analysisiout/${dateStr}.html`, 'utf8')
         // htmldata = fs.readFileSync(`./html/2022-01-09.html`, 'utf8')
-        console.log(htmldata)
       } catch (err) {
         console.error(err)
       }
-  
+    console.log(htmldata)
     // 定义transport对象并发送邮件
     let mailOptions = {
     // secrets.MAILL
