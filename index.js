@@ -127,8 +127,8 @@ function getNewsDetail(date, queues) {
         const html = $(".cnt_bd").html();
         const markdown = turndownService.turndown(html);
 
-          console.log(title);
-          console.log(html);
+        //  console.log(title);
+          //console.log(html);
         //   console.log(markdown);
 
         const index = queues.indexOf(href);
