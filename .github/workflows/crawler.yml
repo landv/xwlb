@@ -94,6 +94,6 @@ jobs:
         #if: steps.check_files.outputs.files_exists == 'true'
         run: node mail.js landvcn@qq.com ${{ secrets.LANDVMAILL }} landvcn@qq.com
       - name: Send email2
-        #if: steps.check_files.outputs.files_exists == 'true'
+        if: steps.check_files.outputs.files_exists == 'true'
         run: node mail.js 1402665767@qq.com ${{ secrets.DAMONMAILL }} 1402665767@qq.com
 
