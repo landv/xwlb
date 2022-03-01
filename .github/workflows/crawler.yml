@@ -96,4 +96,7 @@ jobs:
       - name: Send email2
         if: steps.check_files.outputs.files_exists == 'true'
         run: node mail.js 1402665767@qq.com ${{ secrets.DAMONMAILL }} 1402665767@qq.com
+      - name: Send email3
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: node mail.js 408290026@qq.com ${{ secrets.DAMONMAILL2 }} 408290026@qq.com
 
