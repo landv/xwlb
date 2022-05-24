@@ -120,6 +120,7 @@ function getNewsDetail(date, queues) {
         }
 
         const $ = res.$;
+        console.log($);
         // 新闻详情里面cnt_nav h3是标题
         const title = $(".cnt_nav h3").text().trim().replace("[视频]", "");
         //   const content = $(".cnt_bd").text();
