@@ -125,10 +125,11 @@ function getNewsDetail(date, queues) {
         //   const content = $(".cnt_bd").text();
         // 新闻详情里面cnt_bd 是文字内容。在20:00的时候可能不完整。
         const html = $(".cnt_bd").html();
+          console.log(title);
+          console.log(html);
         const markdown = turndownService.turndown(html);
 
-         console.log(title);
-          console.log(html);
+         
           console.log(markdown);
 
         const index = queues.indexOf(href);
