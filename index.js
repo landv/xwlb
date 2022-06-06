@@ -105,6 +105,8 @@ function getNewsDetailQueues(date) {
 
 // 获取新闻详情
 function getNewsDetail(date, queues) {
+  // console.log(queues)
+  // TODO 判断URL是否能够正常访问，不能就跳过。
   const result = [];
   return new Promise((resolve) => {
     const c = new Crawler({
@@ -120,18 +122,33 @@ function getNewsDetail(date, queues) {
         }
 
         const $ = res.$;
-        console.log($);
+        // console.log($);
         // 新闻详情里面cnt_nav h3是标题
-        const title = $(".cnt_nav h3").text().trim().replace("[视频]", "");
-        //   const content = $(".cnt_bd").text();
+
+        var ti = ""
+        var ht = ""
+        // 进行时间判断，2022年5月22日以后使用新的方式获取
+        // console.log(date)
+        if (formatDate(date) > '2022-05-22') {
+          // const title = $(".tit").text().trim().replace("[视频]", "");
+          // const html = $(".content_area").html();
+          ti = ".tit"
+          ht = ".content_area"
+        } else {
+          ti = ".cnt_nav h3"
+          ht = ".cnt_bd"
+        }
+        const title = $(ti).text().trim().replace("[视频]", "");
+        //const content = $(".cnt_bd").text();
         // 新闻详情里面cnt_bd 是文字内容。在20:00的时候可能不完整。
-        const html = $(".cnt_bd").html();
-          console.log(title);
-          console.log(html);
+        const html = $(ht).html();
+
+        console.log(title);
+        // console.log(html);
         const markdown = turndownService.turndown(html);
 
-         
-          console.log(markdown);
+
+        // console.log(markdown);
 
         const index = queues.indexOf(href);
         result[index] = {
@@ -192,7 +209,7 @@ async function main(startDate, endDate) {
   const ps = dates.map((nowDate) => {
     const p = (async (date) => {
       const queues = await getNewsDetailQueues(date);
-
+      console.log("queues::::")
       console.log(queues);
       if (!queues.length) {
         console.log(`${formatDate(nowDate)} 暂无新闻联播`);
