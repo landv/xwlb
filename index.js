@@ -115,7 +115,7 @@ function getNewsDetail(date, queues) {
       callback: (error, res, done) => {
         const uri = res.request.uri;
         const href = uri.href;
-        if (error) {
+        if (error || !res || res.statusCode !== 200) {
           console.log(formatDate(date), href);
           console.error(error);
           done();
